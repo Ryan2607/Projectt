@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vuoi uscire con me?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: #fdf2f8; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            color: #4a4a4a;
+        }
+
+        .card {
+            background: white;
+            padding: 40px 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+            z-index: 10;
+        }
+
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.5s ease-in-out; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 { font-size: 1.5rem; margin-bottom: 5px; color: #333; }
+        p.subtext { font-size: 0.85rem; color: #888; margin-bottom: 25px; }
+
+        img.reaction-img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn-group { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
+
+        button {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        button:active { transform: scale(0.95); }
+
+        .btn-primary { background-color: #fbcfe8; color: #831843; }
+        .btn-primary:hover { background-color: #f9a8d4; }
+
+        .btn-secondary { background-color: #e5e7eb; color: #4b5563; }
+
+        #btnNo { position: relative; transition: top 0.2s, left 0.2s; }
+
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 5px; }
+        input[type="date"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            box-sizing: border-box;
+        }
+
+        .food-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .food-item {
+            background: #fdf2f8;
+            padding: 15px 5px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            font-size: 0.9rem;
+        }
+        .food-item:hover { background: #fbcfe8; }
+        .food-item.selected { border-color: #f472b6; background: #fbcfe8; font-weight: bold; }
+
+    </style>
+</head>
+<body>
+
+    <div class="card">
+
+        <div id="page1" class="page active">
+            <img src="https://i.ibb.co/DfXCZwFx/mia.jpg" alt="Gattino" class="reaction-img" style="border-radius: 50%;">
+            <h1>Vuoi uscire con me? 🌸</h1>
+            <div class="btn-group">
+                <button class="btn-primary" onclick="nextPage('page2')">SÌ 💕</button>
+                <button class="btn-secondary" id="btnNo">no... 👎</button>
+            </div>
+        </div>
+
+        <div id="page2" class="page">
+            <img src="https://pbs.twimg.com/media/Fb2szOIUUAAzTqu.jpg" alt="Spongebob Sorpreso" class="reaction-img">
+            <h1>ASPETTA, HAI DETTO DAVVERO SÌ?? 😭</h1>
+            <p class="subtext">Ero già pronto a ricevere un no 😅</p>
+            <button class="btn-primary" onclick="nextPage('page3')">okay okay! ➔</button>
+        </div>
+
+        <div id="page3" class="page">
+            <h1>Quindi... quando sei libera? 🗓️</h1>
+            <div class="input-group">
+                <label>Scegli un giorno</label>
+                <input type="date" id="datePicker">
+            </div>
+            <div class="input-group">
+                <label>A che ora?</label>
+                <select id="timePicker">
+                    <option value="" disabled selected>Seleziona un orario...</option>
+                    <option value="17:00">17:00 - mangiamo con i pensionati</option>
+                    <option value="18:00">18:00 - questa è la risposta giusta</option>
+                    <option value="19:00">19:00 - mi stai già facendo venire fame</option>
+                    <option value="20:00">20:00 - orario perfetto per uscire</option>
+                </select>
+            </div>
+            <button class="btn-primary" onclick="nextPage('page4')" style="margin-top: 10px;">fissa la data! ➔</button>
+        </div>
+
+        <div id="page4" class="page">
+            <h1>Cosa ti va di mangiare? 🥂✨</h1>
+            <div class="food-grid">
+                <div class="food-item" onclick="selectFood(this)">🍕 Pizza</div>
+                <div class="food-item" onclick="selectFood(this)">🍣 Sushi</div>
+                <div class="food-item" onclick="selectFood(this)">🍝 Pasta</div>
+                <div class="food-item" onclick="selectFood(this)">🍦 Gelato</div>                                        
+                <div class="food-item" onclick="selectFood(this)">🍜 Ramen</div>
+            </div>
+            <button class="btn-primary" onclick="nextPage('page5')">questo! ➔</button>
+        </div>
+
+        <div id="page5" class="page">
+            <img src="https://i.ibb.co/SwhzXhBW/sam.jpg" alt="Shrek" class="reaction-img" style="border-radius: 50%;">
+            <h1>Meno male che non hai detto no, Samantha. Fatti trovare pronta per le 18:00, ti passo a prendere </h1>
+            <p class="subtext" style="font-size: 0.7rem; margin-top: 20px;">
+                P.S. le persone normali mandano un messaggio. Io ti ho fatto un sito web. Niente di che.
+            </p>
+        </div>
+
+    </div>
+
+    <script>
+        function nextPage(pageId) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        const btnNo = document.getElementById('btnNo');
+
+        btnNo.addEventListener('mouseover', () => {
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+
+            const btnWidth = btnNo.offsetWidth;
+            const btnHeight = btnNo.offsetHeight;                                                                  
+
+            const randomX = Math.floor(Math.random() * (windowWidth - btnWidth));
+            const randomY = Math.floor(Math.random() * (windowHeight - btnHeight));
+
+            btnNo.style.position = 'fixed';
+            btnNo.style.left = randomX + 'px';
+            btnNo.style.top = randomY + 'px';
+        });
+
+        function selectFood(element) {
+            const items = document.querySelectorAll('.food-item');
+            items.forEach(item => item.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+    </script>
+</body>
+</html>
