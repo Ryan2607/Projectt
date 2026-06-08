@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Per te, Meryouma 🌻</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0fdf4; /* Verde salvia rilassante */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #4a4a4a;
+            overflow: hidden; /* Evita lo scroll dell'intera pagina */
+        }
+
+        .card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            max-height: 90vh; /* Permette alla carta di non uscire dallo schermo */
+            overflow-y: auto; /* Aggiunge lo scroll interno se i contenuti sono lunghi */
+            position: relative;
+            z-index: 10;
+            scrollbar-width: thin;
+            scrollbar-color: #bbf7d0 transparent;
+        }
+
+        /* Nascondi scrollbar per design più pulito su Chrome/Safari */
+        .card::-webkit-scrollbar { width: 6px; }
+        .card::-webkit-scrollbar-thumb { background: #bbf7d0; border-radius: 10px; }
+
+        .page { display: none; }
+        .page.active { display: block; animation: fadeUp 0.8s ease-in-out; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 { font-size: 1.4rem; margin-bottom: 15px; color: #333; font-weight: 600; line-height: 1.4; }
+        p.text { font-size: 0.95rem; color: #555; margin-bottom: 25px; line-height: 1.6; font-weight: 300; }
+
+        img.reaction-img {
+            width: 140px;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Bottoni */
+        .btn-group { display: flex; justify-content: center; gap: 15px; margin-top: 10px; }
+        
+        button {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        button:active { transform: scale(0.95); }
+        .btn-primary { background-color: #bbf7d0; color: #166534; margin-top: 10px; }
+        .btn-primary:hover { background-color: #86efac; }
+        .btn-secondary { background-color: #fef08a; color: #854d0e; margin-top: 10px; }
+        .btn-secondary:hover { background-color: #fde047; }
+
+        /* Esercizio di respirazione */
+        .breath-circle {
+            width: 100px;
+            height: 100px;
+            background-color: #bbf7d0;
+            border-radius: 50%;
+            margin: 0 auto 20px auto;
+            animation: breathe 4s infinite ease-in-out;
+        }
+
+        @keyframes breathe {
+            0% { transform: scale(0.8); opacity: 0.7; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.8); opacity: 0.7; }
+        }
+
+        /* --- STILI WIDGET INTERATTIVI --- */
+        .widget {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .widget h2 { font-size: 1.1rem; margin-top: 0; margin-bottom: 15px; color: #4b5563; }
+
+        /* Pluriball */
+        .bubble-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            justify-items: center;
+            margin-bottom: 15px;
+        }
+        .bubble {
+            width: 40px;
+            height: 40px;
+            background: #dbeafe;
+            border-radius: 50%;
+            box-shadow: inset -3px -3px 6px rgba(0,0,0,0.1), 2px 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+        .bubble.popped {
+            background: #e5e7eb;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1);
+            transform: scale(0.9);
+        }
+
+        .btn-small {
+            background: white;
+            border: 2px solid #e5e7eb;
+            color: #6b7280;
+            padding: 5px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 400;
+        }
+
+        /* Messaggi */
+        .message-box {
+            background: #f0fdf4;
+            border: 2px dashed #bbf7d0;
+            border-radius: 10px;
+            padding: 15px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            font-weight: 400;
+            color: #166534;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        /* Lavagna */
+        canvas {
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            background: #fff;
+            width: 100%;
+            height: 180px;
+            touch-action: none; /* Impedisce lo scroll mentre si disegna sul telefono */
+            cursor: crosshair;
+            margin-bottom: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="card" id="mainCard">
+        
+        <div id="page1" class="page active">
+            <img src="https://i.ibb.co/SwhzXhBW/sam.jpg" alt="Samantha" class="reaction-img">
+            <h1>Ehi Meryouma... 🌻</h1>
+            <p class="text">Ho pensato di prepararti una piccola cosa.</p>
+            <div class="btn-group">
+                <button class="btn-primary" onclick="nextPage('page2')">Apri 💌</button>
+            </div>
+        </div>
+
+        <div id="page2" class="page">
+            <h1>So che in questo momento è dura.</h1>
+            <p class="text">Le cose sembrano pesanti e la situazione è difficile da affrontare. È normale sentirsi stanchi.</p>
+            <button class="btn-primary" onclick="nextPage('page3')">Avanti ➔</button>
+        </div>
+
+        <div id="page3" class="page">
+            <div class="breath-circle"></div>
+            <h1>Fai un bel respiro profondo.</h1>
+            <p class="text">Segui il cerchio. Inspira... ed espira. Concediti un momento solo per te.</p>
+            <button class="btn-primary" onclick="nextPage('page4')">Sto meglio ➔</button>
+        </div>
+
+        <div id="page4" class="page">
+            <img src="https://i.ibb.co/DfXCZwFx/mia.jpg" alt="Tu" class="reaction-img">
+            <h1>Non sei sola.</h1>
+            <p class="text">Hai già superato giorni difficili in passato. Prenditi il tuo tempo, un passo alla volta. Io sono qui per te. Ti voglio bene. ❤️</p>
+            <button class="btn-secondary" onclick="nextPage('page5')">Un'ultima cosa ✨</button>
+        </div>
+
+        <div id="page5" class="page">
+            <h1>Kit di Emergenza 🛠️</h1>
+            <p class="text" style="font-size: 0.85rem;">Non potevo costruirti un robot per tenerti compagnia o sistemare tutto con la logica... quindi ti ho programmato questo spazio. Usalo per distrarti ogni volta che vuoi.</p>
+            
+            <div class="widget">
+                <h2>1. Scoppia lo stress 🫧</h2>
+                <div class="bubble-grid" id="bubbleGrid"></div>
+                <button class="btn-small" onclick="resetBubbles()">Ripristina bolle</button>
+            </div>
+
+            <div class="widget">
+                <h2>2. Pesca un pensiero 💌</h2>
+                <div class="message-box" id="messageBox">Clicca il bottone qui sotto...</div>
+                <button class="btn-small" onclick="generateMessage()" style="background: #bbf7d0; border-color: #bbf7d0; color: #166534; font-weight: 600;">Pesca bigliettino</button>
+            </div>
+
+            <div class="widget">
+                <h2>3. Scarabocchia via tutto 🖍️</h2>
+                <canvas id="drawingCanvas"></canvas>
+                <button class="btn-small" onclick="clearCanvas()">Cancella tutto</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- GESTIONE PAGINE ---
+        function nextPage(pageId) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            
+            setTimeout(() => {
+                document.getElementById(pageId).classList.add('active');
+                // Riporta lo scroll in alto se la carta è lunga
+                document.getElementById('mainCard').scrollTop = 0;
+                
+                // Se apriamo l'ultima pagina, ridimensiona il canvas correttamente
+                if(pageId === 'page5') {
+                    setTimeout(resizeCanvas, 100);
+                }
+            }, 100);
+        }
+
+        // --- 1. PLURIBALL ---
+        const grid = document.getElementById('bubbleGrid');
+        function createBubbles() {
+            grid.innerHTML = '';
+            for(let i = 0; i < 15; i++) {
+                let bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                bubble.onclick = function() {
+                    if(!this.classList.contains('popped')) {
+                        this.classList.add('popped');
+                        if (navigator.vibrate) navigator.vibrate(40);
+                    }
+                };
+                grid.appendChild(bubble);
+            }
+        }
+        function resetBubbles() { createBubbles(); }
+        createBubbles();
+
+        // --- 2. MESSAGGI ---
+        const messages = [
+            "Fai un bel respiro. Stai andando alla grande.",
+            "Non devi avere tutte le risposte oggi. Fai un passo alla volta.",
+            "Sono fiero di come stai affrontando questa situazione.",
+            "Prenditi una pausa, te la meriti. Sii gentile con te stessa.",
+            "Ricorda di bere un bicchiere d'acqua.",
+            "Anche le giornate più pesanti finiscono. Questa passerà.",
+            "Sono qui, dalla tua parte. Senza fretta e senza pressione.",
+            "Sei una persona fortissima, anche se oggi ti senti fragile.",
+            "Va bene sentirsi stanchi. Hai il diritto di riposare."
+        ];
+
+        function generateMessage() {
+            const box = document.getElementById('messageBox');
+            box.style.opacity = 0;
+            setTimeout(() => {
+                const randomIndex = Math.floor(Math.random() * messages.length);
+                box.innerText = '"' + messages[randomIndex] + '"';
+                box.style.opacity = 1;
+                box.style.transition = "opacity 0.3s ease";
+            }, 200);
+        }
+
+        // --- 3. LAVAGNA ---
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        function resizeCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        let isDrawing = false;
+
+        function startPosition(e) {
+            isDrawing = true;
+            draw(e);
+        }
+        function endPosition() {
+            isDrawing = false;
+            ctx.beginPath();
+        }
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault(); 
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#9ca3af';
+
+            let x = e.clientX || (e.touches && e.touches[0].clientX);
+            let y = e.clientY || (e.touches && e.touches[0].clientY);
+            
+            const rect = canvas.getBoundingClientRect();
+            x = x - rect.left;
+            y = y - rect.top;
+
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mouseup', endPosition);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseout', endPosition);
+        canvas.addEventListener('touchstart', startPosition);
+        canvas.addEventListener('touchend', endPosition);
+        canvas.addEventListener('touchmove', draw);
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    </script>
+</body>
+</html>
