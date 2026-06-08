@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kit di Emergenza per Meryouma 🛠️🤍</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f3f4f6; /* Grigio chiarissimo rilassante */
+            color: #374151;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            text-align: center;
+            padding: 30px 20px 10px;
+            max-width: 500px;
+        }
+
+        .header h1 {
+            font-size: 1.6rem;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 400px;
+            margin-bottom: 40px;
+        }
+
+        /* Sezioni delle app */
+        .widget {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        h2 { font-size: 1.2rem; margin-top: 0; margin-bottom: 15px; color: #4b5563; }
+
+        /* 1. Pluriball (Bubble Wrap) */
+        .bubble-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            justify-items: center;
+            margin-bottom: 15px;
+        }
+
+        .bubble {
+            width: 45px;
+            height: 45px;
+            background: #dbeafe;
+            border-radius: 50%;
+            box-shadow: inset -3px -3px 6px rgba(0,0,0,0.1), 2px 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .bubble.popped {
+            background: #e5e7eb;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1);
+            transform: scale(0.9);
+        }
+
+        .btn-small {
+            background: transparent;
+            border: 2px solid #e5e7eb;
+            color: #6b7280;
+            padding: 5px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        .btn-small:hover { background: #f3f4f6; }
+
+        /* 2. Generatore di Messaggi */
+        .message-box {
+            background: #fdf2f8;
+            border: 2px dashed #fbcfe8;
+            border-radius: 15px;
+            padding: 20px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            font-weight: 400;
+            color: #831843;
+            font-style: italic;
+        }
+
+        .btn-primary {
+            background: #fbcfe8;
+            color: #831843;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            transition: transform 0.1s;
+        }
+        .btn-primary:active { transform: scale(0.95); }
+
+        /* 3. Lavagna Magica */
+        canvas {
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            background: #fff;
+            width: 100%;
+            height: 200px;
+            touch-action: none; /* Impedisce lo scroll mentre si disegna sul telefono */
+            cursor: crosshair;
+            margin-bottom: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Kit per Meryouma 🛠️</h1>
+        <p>Non potevo costruirti un robot per tenerti compagnia o sistemare tutto con la logica... quindi ti ho programmato questo spazio. Usalo come vuoi.</p>
+    </div>
+
+    <div class="container">
+        
+        <!-- WIDGET 1: Pluriball -->
+        <div class="widget">
+            <h2>1. Scoppia lo stress 🫧</h2>
+            <div class="bubble-grid" id="bubbleGrid">
+                <!-- Bolle generate con JS -->
+            </div>
+            <button class="btn-small" onclick="resetBubbles()">Ripristina bolle</button>
+        </div>
+
+        <!-- WIDGET 2: Messaggi in Barattolo -->
+        <div class="widget">
+            <h2>2. Pesca un pensiero 💌</h2>
+            <div class="message-box" id="messageBox">
+                Clicca il bottone qui sotto...
+            </div>
+            <button class="btn-primary" onclick="generateMessage()">Pesca un bigliettino</button>
+        </div>
+
+        <!-- WIDGET 3: Lavagna -->
+        <div class="widget">
+            <h2>3. Scarabocchia via tutto 🖍️</h2>
+            <canvas id="drawingCanvas"></canvas>
+            <button class="btn-small" onclick="clearCanvas()">Cancella tutto</button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- 1. LOGICA PLURIBALL ---
+        const grid = document.getElementById('bubbleGrid');
+        
+        function createBubbles() {
+            grid.innerHTML = '';
+            for(let i = 0; i < 20; i++) {
+                let bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                bubble.onclick = function() {
+                    // Se non è già scoppiata, la scoppia
+                    if(!this.classList.contains('popped')) {
+                        this.classList.add('popped');
+                        // Aggiunge una piccola vibrazione se supportata dal telefono
+                        if (navigator.vibrate) navigator.vibrate(50);
+                    }
+                };
+                grid.appendChild(bubble);
+            }
+        }
+
+        function resetBubbles() {
+            createBubbles();
+        }
+        
+        createBubbles(); // Inizializza le bolle all'avvio
+
+        // --- 2. LOGICA MESSAGGI ---
+        const messages = [
+            "Fai un bel respiro. Stai andando alla grande.",
+            "Non devi avere tutte le risposte oggi. Fai un passo alla volta.",
+            "Sono fiero di come stai affrontando questa situazione.",
+            "Prenditi una pausa, te la meriti. Sii gentile con te stessa.",
+            "Ricorda di bere un bicchiere d'acqua.",
+            "Anche le giornate più pesanti finiscono. Questa passerà.",
+            "Sono qui, dalla tua parte. Senza fretta e senza pressione.",
+            "Sei una persona fortissima, anche se oggi ti senti fragile.",
+            "Va bene sentirsi stanchi. Hai il diritto di riposare."
+        ];
+
+        function generateMessage() {
+            const box = document.getElementById('messageBox');
+            // Animazione di dissolvenza
+            box.style.opacity = 0;
+            setTimeout(() => {
+                const randomIndex = Math.floor(Math.random() * messages.length);
+                box.innerText = '"' + messages[randomIndex] + '"';
+                box.style.opacity = 1;
+                box.style.transition = "opacity 0.3s ease";
+            }, 200);
+        }
+
+        // --- 3. LOGICA LAVAGNA MAGICA ---
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Imposta dimensioni interne del canvas
+        function resizeCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        let isDrawing = false;
+
+        function startPosition(e) {
+            isDrawing = true;
+            draw(e);
+        }
+
+        function endPosition() {
+            isDrawing = false;
+            ctx.beginPath();
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            e.preventDefault(); // Previene lo scroll
+
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#9ca3af';
+
+            // Gestisce sia il mouse che il touch (dita)
+            let x = e.clientX || (e.touches && e.touches[0].clientX);
+            let y = e.clientY || (e.touches && e.touches[0].clientY);
+            
+            // Calcola la posizione corretta in base alla posizione del canvas
+            const rect = canvas.getBoundingClientRect();
+            x = x - rect.left;
+            y = y - rect.top;
+
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        // Eventi per Mouse
+        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mouseup', endPosition);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseout', endPosition);
+
+        // Eventi per Touchscreen
+        canvas.addEventListener('touchstart', startPosition);
+        canvas.addEventListener('touchend', endPosition);
+        canvas.addEventListener('touchmove', draw);
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    </script>
+</body>
+</html>
